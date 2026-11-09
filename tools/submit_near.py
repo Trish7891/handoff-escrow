@@ -43,17 +43,19 @@ def request_id() -> str:
     return rid
 
 
-def payload(email: str, wallet: str, demo_url: str) -> dict:
-    idea = (ROOT / "docs" / "idea.txt").read_text().strip()
+def payload(email: str, wallet: str, demo_url: str, *,
+            project: str = PROJECT, repo: str = REPO,
+            idea_file: str = "docs/idea.txt") -> dict:
+    idea = (ROOT / idea_file).read_text().strip()
     return {
         "requestId": request_id(),
-        "projectName": PROJECT,
+        "projectName": project,
         "leadName": LEAD,
         "email": email,
         "size": SIZE,
         "tracks": TRACKS,
         "nearAddress": wallet,
-        "projectUrl": REPO,
+        "projectUrl": repo,
         "demoUrl": demo_url,
         "idea": idea,
         "consent": True,
@@ -97,13 +99,17 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--confirm", action="store_true", help="actually POST")
     ap.add_argument("--tracks", default=",".join(TRACKS),
                     help="comma separated track ids (default: agents)")
+    ap.add_argument("--project", default=PROJECT)
+    ap.add_argument("--repo", default=REPO)
+    ap.add_argument("--idea-file", default="docs/idea.txt")
     a = ap.parse_args(argv)
     if a.tracks != ",".join(TRACKS):
         TRACKS[:] = [t.strip() for t in a.tracks.split(",") if t.strip()]
     if not (a.email and a.wallet and a.demo_url):
         ap.error("--email, --wallet and --demo-url are required")
 
-    p = payload(a.email, a.wallet, a.demo_url)
+    p = payload(a.email, a.wallet, a.demo_url, project=a.project,
+                repo=a.repo, idea_file=a.idea_file)
     text = json.dumps(p, indent=2, ensure_ascii=False)
     problems = check(p)
     print(text)
