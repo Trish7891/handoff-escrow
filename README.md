@@ -40,6 +40,8 @@ and auditable afterwards:
 
 ## What the demo actually does
 
+![The report after `python3 -m handoff demo`](docs/demo.png)
+
 One shared ledger, three jobs, three different endings:
 
 | job | winner | outcome | verdict | money conserved |

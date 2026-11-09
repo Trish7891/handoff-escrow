@@ -3,3 +3,6 @@ __pycache__/
 artifacts/
 contracts/**/target/
 !artifacts/.gitkeep
+
+# submission bookkeeping
+.submit_request_id
